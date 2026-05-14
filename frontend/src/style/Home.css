@@ -1,50 +1,214 @@
 /* src/style/Home.css */
 
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+body{
+  font-family:Arial, sans-serif;
+  overflow-x:hidden;
+}
+
+/* ================= MAIN CONTAINER ================= */
+
 .homeContainer{
   min-height:100vh;
+  width:100%;
   background:#f8fafc;
+  padding-bottom:40px;
 }
+
+/* ================= NAVBAR ================= */
 
 .navBar{
   display:flex;
   justify-content:space-between;
   align-items:center;
+
   padding:20px 40px;
+
   background:white;
+
+  box-shadow:0 2px 10px rgba(0,0,0,0.05);
+
+  flex-wrap:wrap;
+  gap:15px;
+}
+
+.navBar h2{
+  color:#0ea5e9;
+  font-size:32px;
 }
 
 .navRight{
   display:flex;
   align-items:center;
   gap:10px;
+  flex-wrap:wrap;
 }
+
+/* ================= MAIN SECTION ================= */
 
 .meetContainer{
   display:flex;
   justify-content:space-between;
   align-items:center;
+
   padding:60px;
+
+  gap:50px;
+
+  flex-wrap:wrap;
 }
 
+/* ================= LEFT PANEL ================= */
+
 .leftPanel{
-  width:50%;
+  flex:1;
+  min-width:300px;
 }
 
 .leftPanel h1{
   font-size:50px;
   margin-bottom:20px;
+  line-height:1.2;
+  color:#0f172a;
 }
 
 .leftPanel p{
   font-size:20px;
   margin-bottom:30px;
+  color:#475569;
+  line-height:1.6;
 }
+
+/* ================= JOIN BOX ================= */
 
 .joinBox{
   display:flex;
   gap:20px;
+  align-items:center;
+  flex-wrap:wrap;
+}
+
+.joinBox .MuiTextField-root{
+  background:white;
+  border-radius:10px;
+  min-width:280px;
+}
+
+/* ================= RIGHT PANEL ================= */
+
+.rightPanel{
+  flex:1;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  min-width:300px;
 }
 
 .rightPanel img{
-  width:500px;
+  width:100%;
+  max-width:500px;
+
+  border-radius:20px;
+
+  object-fit:cover;
+
+  box-shadow:0 5px 20px rgba(0,0,0,0.1);
+
+  transition:0.3s;
+}
+
+.rightPanel img:hover{
+  transform:scale(1.03);
+}
+
+/* ================= TABLET ================= */
+
+@media screen and (max-width:992px){
+
+  .meetContainer{
+    flex-direction:column-reverse;
+    text-align:center;
+    padding:40px 30px;
+  }
+
+  .leftPanel h1{
+    font-size:42px;
+  }
+
+  .joinBox{
+    justify-content:center;
+  }
+}
+
+/* ================= MOBILE ================= */
+
+@media screen and (max-width:768px){
+
+  .navBar{
+    padding:20px;
+    flex-direction:column;
+    text-align:center;
+  }
+
+  .navRight{
+    justify-content:center;
+  }
+
+  .meetContainer{
+    padding:30px 20px;
+    gap:35px;
+  }
+
+  .leftPanel h1{
+    font-size:34px;
+  }
+
+  .leftPanel p{
+    font-size:17px;
+  }
+
+  .joinBox{
+    flex-direction:column;
+    width:100%;
+  }
+
+  .joinBox .MuiTextField-root{
+    width:100%;
+    min-width:100%;
+  }
+
+  .joinBox button{
+    width:100%;
+    height:50px;
+  }
+
+  .rightPanel img{
+    max-width:320px;
+  }
+}
+
+/* ================= SMALL MOBILE ================= */
+
+@media screen and (max-width:480px){
+
+  .navBar h2{
+    font-size:28px;
+  }
+
+  .leftPanel h1{
+    font-size:28px;
+  }
+
+  .leftPanel p{
+    font-size:15px;
+  }
+
+  .rightPanel img{
+    max-width:100%;
+  }
 }

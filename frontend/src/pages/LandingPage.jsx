@@ -1,19 +1,56 @@
 // src/pages/LandingPage.jsx
 
-import React from "react";
-import { Link } from "react-router-dom";
+import React, {
+  useEffect,
+} from "react";
+
+import { Link }
+from "react-router-dom";
 
 import "../style/Lading.css";
 
 export default function LandingPage() {
 
   // check user login
-  const isLoggedIn = localStorage.getItem("token");
+  const isLoggedIn =
+    localStorage.getItem("token");
+
+  /* =========================
+     AUTO LOGOUT WHEN TAB
+     OR WEBSITE CLOSED
+  ========================= */
+
+  useEffect(() => {
+
+    const handleUnload = () => {
+
+      localStorage.removeItem(
+        "token"
+      );
+    };
+
+    // Browser close / tab close
+    window.addEventListener(
+      "beforeunload",
+      handleUnload
+    );
+
+    return () => {
+
+      window.removeEventListener(
+        "beforeunload",
+        handleUnload
+      );
+    };
+
+  }, []);
 
   return (
+
     <div className="landingPageContainer">
 
       {/* ================= NAVBAR ================= */}
+
       <nav className="navbar">
 
         <div className="logo">
@@ -24,28 +61,41 @@ export default function LandingPage() {
 
           {/* Login hone ke baad hi show hoga */}
           {isLoggedIn && (
-            <Link to="/home" className="navLink">
+            <Link
+              to="/home"
+              className="navLink"
+            >
               Join as Guest
             </Link>
           )}
 
           {!isLoggedIn ? (
             <>
-              <Link to="/auth" className="navLink">
+              <Link
+                to="/auth"
+                className="navLink"
+              >
                 Register
               </Link>
 
               <Link to="/auth">
+
                 <button className="loginBtn">
                   Login
                 </button>
+
               </Link>
             </>
           ) : (
+
             <button
               className="loginBtn"
               onClick={() => {
-                localStorage.removeItem("token");
+
+                localStorage.removeItem(
+                  "token"
+                );
+
                 window.location.reload();
               }}
             >
@@ -54,17 +104,22 @@ export default function LandingPage() {
           )}
 
         </div>
+
       </nav>
 
       {/* ================= HERO SECTION ================= */}
+
       <div className="heroSection">
 
         {/* LEFT SIDE */}
+
         <div className="leftSection">
 
           <h1>
             <span>Connect</span>
+
             <br />
+
             with your Loved Ones
           </h1>
 
@@ -73,12 +128,22 @@ export default function LandingPage() {
           </p>
 
           {/* Login hone ke baad hi button dikhega */}
+
           {isLoggedIn ? (
-            <Link to="/home" className="startBtn">
+
+            <Link
+              to="/home"
+              className="startBtn"
+            >
               Start Meeting
             </Link>
+
           ) : (
-            <Link to="/auth" className="startBtn">
+
+            <Link
+              to="/auth"
+              className="startBtn"
+            >
               Get Started
             </Link>
           )}
@@ -86,23 +151,29 @@ export default function LandingPage() {
         </div>
 
         {/* RIGHT SIDE */}
+
         <div className="rightSection">
 
           <img
             className="img1"
+
             src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=800&auto=format&fit=crop"
+
             alt="video-call-user-1"
           />
 
           <img
             className="img2"
+
             src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=800&auto=format&fit=crop"
+
             alt="video-call-user-2"
           />
 
         </div>
 
       </div>
+
     </div>
   );
 }
