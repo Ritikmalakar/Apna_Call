@@ -1,6 +1,6 @@
 // =========================================
 // src/pages/VideoMeet.jsx
-// FULLY FIXED FINAL VERSION
+// FULLY FIXED STABLE VERSION
 // =========================================
 
 import React, {
@@ -43,14 +43,14 @@ import ChatIcon
 from "@mui/icons-material/Chat";
 
 import "../style/VideoMeet.css";
+
 import servrs from "../environment";
 
 // =========================================
 // SERVER
 // =========================================
 
-const server_url =
-servrs;
+const server_url = servrs;
 
 // =========================================
 // RTC CONFIG
@@ -88,6 +88,9 @@ export default function VideoMeet() {
     useRef();
 
   const localVideoref =
+    useRef();
+
+  const localStreamRef =
     useRef();
 
   // =========================================
@@ -146,6 +149,46 @@ export default function VideoMeet() {
 
     getPermissions();
 
+    return () => {
+
+      try {
+
+        if (
+          localStreamRef.current
+        ) {
+
+          localStreamRef.current
+            .getTracks()
+            .forEach(
+              (track) =>
+                track.stop()
+            );
+        }
+
+        for (
+          let id in connections
+        ) {
+
+          connections[id]
+            .close();
+        }
+
+        connections = {};
+
+        if (
+          socketRef.current
+        ) {
+
+          socketRef.current
+            .disconnect();
+        }
+
+      } catch (err) {
+
+        console.log(err);
+      }
+    };
+
   }, []);
 
   // =========================================
@@ -167,7 +210,7 @@ export default function VideoMeet() {
 
             });
 
-        window.localStream =
+        localStreamRef.current =
           stream;
 
         if (
@@ -209,6 +252,9 @@ export default function VideoMeet() {
             "websocket",
           ],
 
+          reconnection: true,
+
+          reconnectionAttempts: 5,
         });
 
       socketRef.current.on(
@@ -228,9 +274,14 @@ export default function VideoMeet() {
           socketIdRef.current =
             socketRef.current.id;
 
+          const roomId =
+            window.location.pathname
+              .split("/")
+              .pop();
+
           socketRef.current.emit(
             "join-call",
-            window.location.pathname
+            roomId
           );
         }
       );
@@ -250,7 +301,15 @@ export default function VideoMeet() {
               )
           );
 
-          delete connections[id];
+          if (
+            connections[id]
+          ) {
+
+            connections[id]
+              .close();
+
+            delete connections[id];
+          }
         }
       );
 
@@ -267,16 +326,12 @@ export default function VideoMeet() {
               socketListId
             ) => {
 
-              // SKIP SELF
-
               if (
                 socketListId ===
                 socketIdRef.current
               ) {
                 return;
               }
-
-              // SKIP DUPLICATE
 
               if (
                 connections[
@@ -285,8 +340,6 @@ export default function VideoMeet() {
               ) {
                 return;
               }
-
-              // CREATE CONNECTION
 
               const connection =
                 new RTCPeerConnection(
@@ -297,9 +350,7 @@ export default function VideoMeet() {
                 socketListId
               ] = connection;
 
-              // =====================================
               // ICE
-              // =====================================
 
               connection.onicecandidate =
                 (
@@ -325,9 +376,7 @@ export default function VideoMeet() {
                   }
                 };
 
-              // =====================================
               // REMOTE TRACK
-              // =====================================
 
               connection.ontrack =
                 (
@@ -335,7 +384,21 @@ export default function VideoMeet() {
                 ) => {
 
                   const remoteStream =
-                    event.streams[0];
+                    new MediaStream();
+
+                  event.streams[0]
+                    .getTracks()
+                    .forEach(
+                      (
+                        track
+                      ) => {
+
+                        remoteStream
+                          .addTrack(
+                            track
+                          );
+                      }
+                    );
 
                   setVideos(
                     (
@@ -372,15 +435,13 @@ export default function VideoMeet() {
                   );
                 };
 
-              // =====================================
-              // ADD LOCAL TRACKS
-              // =====================================
+              // LOCAL TRACKS
 
               if (
-                window.localStream
+                localStreamRef.current
               ) {
 
-                window.localStream
+                localStreamRef.current
                   .getTracks()
                   .forEach(
                     (
@@ -389,15 +450,13 @@ export default function VideoMeet() {
 
                       connection.addTrack(
                         track,
-                        window.localStream
+                        localStreamRef.current
                       );
                     }
                   );
               }
 
-              // =====================================
-              // CREATE OFFER
-              // =====================================
+              // OFFER
 
               if (
                 id ===
@@ -453,8 +512,24 @@ export default function VideoMeet() {
       message
     ) => {
 
-      const signal =
-        JSON.parse(message);
+      let signal;
+
+      try {
+
+        signal =
+          JSON.parse(
+            message
+          );
+
+      } catch (err) {
+
+        console.log(
+          "Invalid Signal:",
+          err
+        );
+
+        return;
+      }
 
       if (
         fromId !==
@@ -585,7 +660,6 @@ export default function VideoMeet() {
 
         room:
           window.location.pathname,
-
       };
 
       socketRef.current.emit(
@@ -608,7 +682,7 @@ export default function VideoMeet() {
 
       setVideo(enabled);
 
-      window.localStream
+      localStreamRef.current
         .getVideoTracks()
         .forEach(
           (track) => {
@@ -631,7 +705,7 @@ export default function VideoMeet() {
 
       setAudio(enabled);
 
-      window.localStream
+      localStreamRef.current
         .getAudioTracks()
         .forEach(
           (track) => {
@@ -657,7 +731,6 @@ export default function VideoMeet() {
             .getDisplayMedia({
 
               video: true,
-
             });
 
         const screenTrack =
@@ -673,6 +746,7 @@ export default function VideoMeet() {
               .getSenders()
               .find(
                 (s) =>
+                  s.track &&
                   s.track.kind ===
                   "video"
               );
@@ -696,7 +770,7 @@ export default function VideoMeet() {
       } else {
 
         const videoTrack =
-          window.localStream
+          localStreamRef.current
             .getVideoTracks()[0];
 
         for (
@@ -708,6 +782,7 @@ export default function VideoMeet() {
               .getSenders()
               .find(
                 (s) =>
+                  s.track &&
                   s.track.kind ===
                   "video"
               );
@@ -733,18 +808,44 @@ export default function VideoMeet() {
 
       try {
 
-        localVideoref.current
-          .srcObject
-          .getTracks()
-          .forEach(
-            (track) =>
-              track.stop()
-          );
+        if (
+          localStreamRef.current
+        ) {
 
-      } catch (e) {}
+          localStreamRef.current
+            .getTracks()
+            .forEach(
+              (track) =>
+                track.stop()
+            );
+        }
 
-      window.location.href =
-        "/";
+        for (
+          let id in connections
+        ) {
+
+          connections[id]
+            .close();
+        }
+
+        connections = {};
+
+        if (
+          socketRef.current
+        ) {
+
+          socketRef.current
+            .disconnect();
+        }
+
+      } catch (e) {
+
+        console.log(e);
+      }
+
+      window.location.replace(
+        "/"
+      );
     };
 
   // =========================================
@@ -754,7 +855,9 @@ export default function VideoMeet() {
   const connect =
     () => {
 
-      if (!username.trim()) {
+      if (
+        !username.trim()
+      ) {
         return;
       }
 
@@ -783,7 +886,9 @@ export default function VideoMeet() {
 
           <TextField
             label="Username"
+
             value={username}
+
             onChange={(e) =>
               setUsername(
                 e.target.value
@@ -800,9 +905,11 @@ export default function VideoMeet() {
 
           <video
             ref={localVideoref}
+
             autoPlay
             muted
             playsInline
+
             className="preview-video"
           />
 
@@ -832,6 +939,7 @@ export default function VideoMeet() {
 
                       <div
                         key={index}
+
                         className="chat-message"
                       >
 
@@ -864,17 +972,22 @@ export default function VideoMeet() {
 
                 <TextField
                   value={message}
+
                   onChange={(e) =>
                     setMessage(
                       e.target.value
                     )
                   }
+
                   label="Message"
                 />
 
                 <Button
                   variant="contained"
-                  onClick={sendMessage}
+
+                  onClick={
+                    sendMessage
+                  }
                 >
                   Send
                 </Button>
@@ -885,7 +998,7 @@ export default function VideoMeet() {
 
           )}
 
-          {/* CONTROLS */}
+          {/* BUTTONS */}
 
           <div className="button-group">
 
@@ -893,6 +1006,7 @@ export default function VideoMeet() {
               onClick={
                 handleVideo
               }
+
               style={{
                 color:
                   "white",
@@ -911,6 +1025,7 @@ export default function VideoMeet() {
               onClick={
                 handleAudio
               }
+
               style={{
                 color:
                   "white",
@@ -931,6 +1046,7 @@ export default function VideoMeet() {
                 onClick={
                   handleScreen
                 }
+
                 style={{
                   color:
                     "white",
@@ -944,13 +1060,13 @@ export default function VideoMeet() {
                 )}
 
               </IconButton>
-
             )}
 
             <Badge
               badgeContent={
                 newMessages
               }
+
               color="error"
             >
 
@@ -965,6 +1081,7 @@ export default function VideoMeet() {
                     0
                   );
                 }}
+
                 style={{
                   color:
                     "white",
@@ -981,10 +1098,11 @@ export default function VideoMeet() {
               onClick={
                 handleEndCall
               }
+
               style={{
                 color:
                   "red",
-              }}
+                }}
             >
 
               <CallEndIcon />
@@ -997,7 +1115,9 @@ export default function VideoMeet() {
 
           <video
             className="local-video"
+
             ref={localVideoref}
+
             autoPlay
             muted
             playsInline
@@ -1007,47 +1127,53 @@ export default function VideoMeet() {
 
           <div className="video-grid">
 
-            {videos.map((video) => {
+            {videos.map(
+              (video) => {
 
-              return (
+                return (
 
-                <video
-                  key={
-                    video.socketId
-                  }
-
-                  className="video-player"
-
-                  autoPlay
-                  playsInline
-
-                  ref={(ref) => {
-
-                    if (
-                      ref &&
-                      video.stream
-                    ) {
-
-                      ref.srcObject =
-                        video.stream;
-
-                      ref.onloadedmetadata =
-                        async () => {
-
-                          try {
-
-                            await ref.play();
-
-                          } catch (err) {
-
-                            console.log(err);
-                          }
-                        };
+                  <video
+                    key={
+                      video.socketId
                     }
-                  }}
-                />
-              );
-            })}
+
+                    className="video-player"
+
+                    autoPlay
+                    playsInline
+
+                    controls={false}
+
+                    muted={false}
+
+                    ref={(ref) => {
+
+                      if (
+                        ref &&
+                        video.stream
+                      ) {
+
+                        ref.srcObject =
+                          video.stream;
+
+                        ref.onloadedmetadata =
+                          async () => {
+
+                            try {
+
+                              await ref.play();
+
+                            } catch (err) {
+
+                              console.log(err);
+                            }
+                          };
+                      }
+                    }}
+                  />
+                );
+              }
+            )}
 
           </div>
 
