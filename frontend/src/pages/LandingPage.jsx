@@ -1,11 +1,7 @@
 // src/pages/LandingPage.jsx
 
-import React, {
-  useEffect,
-} from "react";
-
-import { Link }
-from "react-router-dom";
+import React from "react";
+import { Link } from "react-router-dom";
 
 import "../style/Lading.css";
 
@@ -16,34 +12,14 @@ export default function LandingPage() {
     localStorage.getItem("token");
 
   /* =========================
-     AUTO LOGOUT WHEN TAB
-     OR WEBSITE CLOSED
+     LOGOUT ONLY ON TAB CLOSE
   ========================= */
 
-  useEffect(() => {
+  window.onunload = () => {
 
-    const handleUnload = () => {
-
-      localStorage.removeItem(
-        "token"
-      );
-    };
-
-    // Browser close / tab close
-    window.addEventListener(
-      "beforeunload",
-      handleUnload
-    );
-
-    return () => {
-
-      window.removeEventListener(
-        "beforeunload",
-        handleUnload
-      );
-    };
-
-  }, []);
+    // Sirf tab/browser close par
+    sessionStorage.clear();
+  };
 
   return (
 
@@ -60,7 +36,9 @@ export default function LandingPage() {
         <div className="navItems">
 
           {/* Login hone ke baad hi show hoga */}
+
           {isLoggedIn && (
+
             <Link
               to="/home"
               className="navLink"
@@ -70,6 +48,7 @@ export default function LandingPage() {
           )}
 
           {!isLoggedIn ? (
+
             <>
               <Link
                 to="/auth"
@@ -86,10 +65,12 @@ export default function LandingPage() {
 
               </Link>
             </>
+
           ) : (
 
             <button
               className="loginBtn"
+
               onClick={() => {
 
                 localStorage.removeItem(
@@ -116,11 +97,13 @@ export default function LandingPage() {
         <div className="leftSection">
 
           <h1>
+
             <span>Connect</span>
 
             <br />
 
             with your Loved Ones
+
           </h1>
 
           <p>
