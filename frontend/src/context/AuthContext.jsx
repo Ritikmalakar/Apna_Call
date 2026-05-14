@@ -9,9 +9,7 @@ import {
 } from "react";
 
 import axios from "axios";
-
 import servrs from "../environment";
-
 import {
   useNavigate,
 } from "react-router-dom";
@@ -21,8 +19,9 @@ export const AuthContext =
 
 const client = axios.create({
 
-  // IMPORTANT FIX
-  baseURL: `${servrs}/api`,
+  baseURL:
+    '${servrs}/api',
+
 });
 
 export const AuthProvider = ({
@@ -31,10 +30,6 @@ export const AuthProvider = ({
 
   const navigate =
     useNavigate();
-
-  // =========================================
-  // STATES
-  // =========================================
 
   const [userData,
     setUserData] =
@@ -52,10 +47,6 @@ export const AuthProvider = ({
     setLoading] =
     useState(false);
 
-  // =========================================
-  // CHECK LOGIN
-  // =========================================
-
   useEffect(() => {
 
     const token =
@@ -68,29 +59,11 @@ export const AuthProvider = ({
         "user"
       );
 
-    if (
-      token &&
-      user &&
-      user !== "undefined"
-    ) {
+    if (token && user) {
 
-      try {
-
-        setUserData(
-          JSON.parse(user)
-        );
-
-      } catch (err) {
-
-        console.log(
-          "User Parse Error:",
-          err
-        );
-
-        localStorage.removeItem(
-          "user"
-        );
-      }
+      setUserData(
+        JSON.parse(user)
+      );
     }
 
   }, []);
@@ -110,9 +83,6 @@ export const AuthProvider = ({
 
         setLoading(true);
 
-        setError("");
-        setMessage("");
-
         const response =
           await client.post(
             "/register",
@@ -130,8 +100,6 @@ export const AuthProvider = ({
         navigate("/auth");
 
       } catch (err) {
-
-        console.log(err);
 
         setError(
 
@@ -161,9 +129,6 @@ export const AuthProvider = ({
 
         setLoading(true);
 
-        setError("");
-        setMessage("");
-
         const response =
           await client.post(
             "/login",
@@ -173,18 +138,13 @@ export const AuthProvider = ({
             }
           );
 
-        // SAVE TOKEN
-
         localStorage.setItem(
           "token",
           response.data.token
         );
 
-        // SAVE USER
-
         localStorage.setItem(
           "user",
-
           JSON.stringify(
             response.data.user
           )
@@ -197,8 +157,6 @@ export const AuthProvider = ({
         navigate("/home");
 
       } catch (err) {
-
-        console.log(err);
 
         setError(
 
@@ -229,13 +187,11 @@ export const AuthProvider = ({
         "user"
       );
 
-      setUserData(null);
-
       navigate("/auth");
     };
 
   // =========================================
-  // GET HISTORY
+  // HISTORY
   // =========================================
 
   const getUserHistory =
@@ -255,6 +211,7 @@ export const AuthProvider = ({
                   localStorage.getItem(
                     "token"
                   ),
+
               },
             }
           );
@@ -295,6 +252,7 @@ export const AuthProvider = ({
                   localStorage.getItem(
                     "token"
                   ),
+
               },
             }
           );
@@ -306,10 +264,6 @@ export const AuthProvider = ({
         console.log(err);
       }
     };
-
-  // =========================================
-  // CONTEXT VALUE
-  // =========================================
 
   const value = {
 
@@ -326,10 +280,6 @@ export const AuthProvider = ({
     getUserHistory,
     addToHistory,
   };
-
-  // =========================================
-  // PROVIDER
-  // =========================================
 
   return (
 
