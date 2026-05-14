@@ -9,7 +9,7 @@ import {
 } from "react";
 
 import axios from "axios";
-
+import servrs from "../environment";
 import {
   useNavigate,
 } from "react-router-dom";
@@ -20,7 +20,7 @@ export const AuthContext =
 const client = axios.create({
 
   baseURL:
-    "http://localhost:1111/api",
+    '${servrs}/api',
 
 });
 

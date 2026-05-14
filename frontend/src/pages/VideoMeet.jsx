@@ -43,13 +43,14 @@ import ChatIcon
 from "@mui/icons-material/Chat";
 
 import "../style/VideoMeet.css";
+import servrs from "../environment";
 
 // =========================================
 // SERVER
 // =========================================
 
 const server_url =
-  "http://localhost:1111";
+servrs;
 
 // =========================================
 // RTC CONFIG
