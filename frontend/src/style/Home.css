@@ -1,0 +1,50 @@
+/* src/style/Home.css */
+
+.homeContainer{
+  min-height:100vh;
+  background:#f8fafc;
+}
+
+.navBar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:20px 40px;
+  background:white;
+}
+
+.navRight{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.meetContainer{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:60px;
+}
+
+.leftPanel{
+  width:50%;
+}
+
+.leftPanel h1{
+  font-size:50px;
+  margin-bottom:20px;
+}
+
+.leftPanel p{
+  font-size:20px;
+  margin-bottom:30px;
+}
+
+.joinBox{
+  display:flex;
+  gap:20px;
+}
+
+.rightPanel img{
+  width:500px;
+}

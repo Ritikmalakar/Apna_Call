@@ -1,0 +1,215 @@
+/* ========================= */
+/* HISTORY PAGE */
+/* ========================= */
+
+.history-page{
+
+  min-height:100vh;
+
+  padding:30px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #0f172a,
+      #1e293b
+    );
+
+  color:white;
+}
+
+
+/* ========================= */
+/* HEADER */
+/* ========================= */
+
+.history-header{
+
+  display:flex;
+
+  justify-content:
+    space-between;
+
+  align-items:center;
+
+  margin-bottom:30px;
+
+  flex-wrap:wrap;
+
+  gap:15px;
+}
+
+
+/* ========================= */
+/* BACK BUTTON */
+/* ========================= */
+
+.back-btn{
+
+  padding:12px 18px;
+
+  border:none;
+
+  border-radius:12px;
+
+  background:#2563eb;
+
+  color:white;
+
+  cursor:pointer;
+
+  font-size:15px;
+
+  font-weight:bold;
+
+  transition:0.3s;
+}
+
+.back-btn:hover{
+
+  transform:scale(1.05);
+}
+
+
+/* ========================= */
+/* HISTORY GRID */
+/* ========================= */
+
+.history-grid{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(
+      auto-fit,
+      minmax(300px,1fr)
+    );
+
+  gap:20px;
+}
+
+
+/* ========================= */
+/* HISTORY CARD */
+/* ========================= */
+
+.history-card{
+
+  background:
+    rgba(255,255,255,0.08);
+
+  backdrop-filter:
+    blur(10px);
+
+  padding:25px;
+
+  border-radius:20px;
+
+  border:
+    1px solid
+    rgba(255,255,255,0.1);
+
+  box-shadow:
+    0 8px 30px
+    rgba(0,0,0,0.25);
+
+  transition:0.3s;
+}
+
+.history-card:hover{
+
+  transform:
+    translateY(-5px);
+}
+
+
+/* ========================= */
+/* TEXT */
+/* ========================= */
+
+.meeting-code{
+
+  font-size:22px;
+
+  font-weight:bold;
+
+  color:#38bdf8;
+
+  word-break:break-word;
+}
+
+.meeting-date{
+
+  color:#cbd5e1;
+
+  margin-bottom:20px;
+}
+
+
+/* ========================= */
+/* JOIN BUTTON */
+/* ========================= */
+
+.join-btn{
+
+  padding:12px 20px;
+
+  border:none;
+
+  border-radius:12px;
+
+  background:#22c55e;
+
+  color:white;
+
+  cursor:pointer;
+
+  font-size:15px;
+
+  font-weight:bold;
+
+  transition:0.3s;
+}
+
+.join-btn:hover{
+
+  transform:scale(1.05);
+}
+
+
+/* ========================= */
+/* EMPTY */
+/* ========================= */
+
+.empty-box{
+
+  margin-top:50px;
+
+  background:
+    rgba(255,255,255,0.08);
+
+  padding:25px;
+
+  border-radius:16px;
+
+  text-align:center;
+
+  font-size:18px;
+
+  color:#cbd5e1;
+}
+
+
+/* ========================= */
+/* RESPONSIVE */
+/* ========================= */
+
+@media(max-width:768px){
+
+  .history-header{
+
+    flex-direction:column;
+
+    align-items:flex-start;
+  }
+}

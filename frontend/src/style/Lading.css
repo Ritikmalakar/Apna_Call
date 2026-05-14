@@ -1,0 +1,80 @@
+/* src/style/Lading.css */
+
+.landingPageContainer{
+  width:100%;
+  min-height:100vh;
+  background:#0f172a;
+  color:white;
+}
+
+.navbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:20px 60px;
+}
+
+.logo h2{
+  color:#38bdf8;
+}
+
+.navItems{
+  display:flex;
+  gap:20px;
+  align-items:center;
+}
+
+.navLink{
+  text-decoration:none;
+  color:white;
+  font-size:18px;
+}
+
+.loginBtn{
+  padding:10px 20px;
+  border:none;
+  border-radius:8px;
+  background:#38bdf8;
+  color:white;
+  cursor:pointer;
+}
+
+.heroSection{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:60px;
+}
+
+.leftSection h1{
+  font-size:60px;
+}
+
+.leftSection span{
+  color:#38bdf8;
+}
+
+.leftSection p{
+  margin:20px 0;
+  font-size:20px;
+}
+
+.startBtn{
+  background:#38bdf8;
+  color:white;
+  padding:14px 30px;
+  border-radius:10px;
+  text-decoration:none;
+}
+
+.rightSection{
+  display:flex;
+  gap:20px;
+}
+
+.rightSection img{
+  width:250px;
+  height:350px;
+  object-fit:cover;
+  border-radius:20px;
+}
