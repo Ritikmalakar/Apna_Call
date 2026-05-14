@@ -447,88 +447,102 @@ export default function VideoMeet() {
   // SIGNAL
   // =========================================
 
-  const gotMessageFromServer =
-    async (
-      fromId,
-      message
-    ) => {
+ const gotMessageFromServer =
+  async (
+    fromId,
+    message
+  ) => {
 
-      const signal =
-        JSON.parse(message);
+    let signal;
 
-      if (
-        fromId !==
-        socketIdRef.current
-      ) {
+    try {
 
-        const connection =
-          connections[fromId];
+      signal =
+        typeof message ===
+        "string"
+          ? JSON.parse(message)
+          : message;
 
-        if (!connection) {
-          return;
-        }
+    } catch (err) {
 
-        // SDP
+      console.log(
+        "Invalid Signal:",
+        message
+      );
 
-        if (signal.sdp) {
+      return;
+    }
+
+    if (
+      fromId !==
+      socketIdRef.current
+    ) {
+
+      const connection =
+        connections[fromId];
+
+      if (!connection) {
+        return;
+      }
+
+      // SDP
+
+      if (signal.sdp) {
+
+        await connection
+          .setRemoteDescription(
+            new RTCSessionDescription(
+              signal.sdp
+            )
+          );
+
+        if (
+          signal.sdp.type ===
+          "offer"
+        ) {
+
+          const description =
+            await connection
+              .createAnswer();
 
           await connection
-            .setRemoteDescription(
-              new RTCSessionDescription(
-                signal.sdp
-              )
+            .setLocalDescription(
+              description
             );
 
-          if (
-            signal.sdp.type ===
-            "offer"
-          ) {
+          socketRef.current.emit(
+            "signal",
 
-            const description =
-              await connection
-                .createAnswer();
+            fromId,
 
-            await connection
-              .setLocalDescription(
-                description
-              );
-
-            socketRef.current.emit(
-              "signal",
-
-              fromId,
-
-              JSON.stringify(
-                {
-                  sdp:
-                    connection.localDescription,
-                }
-              )
-            );
-          }
-        }
-
-        // ICE
-
-        if (signal.ice) {
-
-          try {
-
-            await connection
-              .addIceCandidate(
-                new RTCIceCandidate(
-                  signal.ice
-                )
-              );
-
-          } catch (e) {
-
-            console.log(e);
-          }
+            JSON.stringify({
+              sdp:
+                connection.localDescription,
+            })
+          );
         }
       }
-    };
 
+      // ICE
+
+      if (signal.ice) {
+
+        try {
+
+          await connection
+            .addIceCandidate(
+              new RTCIceCandidate(
+                signal.ice
+              )
+            );
+
+        } catch (e) {
+
+          console.log(e);
+        }
+      }
+    }
+  };
   // =========================================
   // CHAT
   // =========================================

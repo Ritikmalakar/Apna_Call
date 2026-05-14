@@ -10,6 +10,7 @@ import {
 
 import axios from "axios";
 import servrs from "../environment";
+
 import {
   useNavigate,
 } from "react-router-dom";
@@ -18,10 +19,7 @@ export const AuthContext =
   createContext();
 
 const client = axios.create({
-
-  baseURL:
-    '${servrs}/api',
-
+  baseURL: `${servrs}/api`,
 });
 
 export const AuthProvider = ({
@@ -47,22 +45,43 @@ export const AuthProvider = ({
     setLoading] =
     useState(false);
 
+  // =========================================
+  // SAFE USER LOAD
+  // =========================================
+
   useEffect(() => {
 
-    const token =
-      localStorage.getItem(
-        "token"
+    try {
+
+      const token =
+        localStorage.getItem(
+          "token"
+        );
+
+      const user =
+        localStorage.getItem(
+          "user"
+        );
+
+      if (token && user) {
+
+        setUserData(
+          JSON.parse(user)
+        );
+      }
+
+    } catch (err) {
+
+      console.log(
+        "Invalid user data"
       );
 
-    const user =
-      localStorage.getItem(
+      localStorage.removeItem(
         "user"
       );
 
-    if (token && user) {
-
-      setUserData(
-        JSON.parse(user)
+      localStorage.removeItem(
+        "token"
       );
     }
 
@@ -82,6 +101,8 @@ export const AuthProvider = ({
       try {
 
         setLoading(true);
+        setError("");
+        setMessage("");
 
         const response =
           await client.post(
@@ -128,6 +149,8 @@ export const AuthProvider = ({
       try {
 
         setLoading(true);
+        setError("");
+        setMessage("");
 
         const response =
           await client.post(
@@ -187,6 +210,8 @@ export const AuthProvider = ({
         "user"
       );
 
+      setUserData(null);
+
       navigate("/auth");
     };
 
@@ -201,17 +226,13 @@ export const AuthProvider = ({
 
         const response =
           await client.get(
-
             "/get_all_activity",
-
             {
               headers: {
-
                 Authorization:
                   localStorage.getItem(
                     "token"
                   ),
-
               },
             }
           );
@@ -247,12 +268,10 @@ export const AuthProvider = ({
 
             {
               headers: {
-
                 Authorization:
                   localStorage.getItem(
                     "token"
                   ),
-
               },
             }
           );
