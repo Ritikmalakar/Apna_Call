@@ -614,47 +614,106 @@ export default function VideoMeet() {
   // VIDEO
   // =========================================
 
-  const handleVideo =
-    () => {
+ const handleVideo =
+  async () => {
 
-      const enabled =
-        !video;
+    try {
 
-      setVideo(enabled);
+      if (
+        !window.localStream
+      ) {
 
-      window.localStream
-        .getVideoTracks()
-        .forEach(
-          (track) => {
+        const stream =
+          await navigator
+            .mediaDevices
+            .getUserMedia({
+              video: true,
+              audio: true,
+            });
 
-            track.enabled =
-              enabled;
-          }
-        );
-    };
+        window.localStream =
+          stream;
+
+        if (
+          localVideoref.current
+        ) {
+
+          localVideoref.current.srcObject =
+            stream;
+        }
+      }
+
+      const videoTrack =
+        window.localStream
+          .getVideoTracks()[0];
+
+      if (!videoTrack) {
+        return;
+      }
+
+      videoTrack.enabled =
+        !videoTrack.enabled;
+
+      setVideo(
+        videoTrack.enabled
+      );
+
+    } catch (err) {
+
+      console.log(
+        "Video Error:",
+        err
+      );
+    }
+  };
 
   // =========================================
   // AUDIO
   // =========================================
+const handleAudio =
+  async () => {
 
-  const handleAudio =
-    () => {
+    try {
 
-      const enabled =
-        !audio;
+      if (
+        !window.localStream
+      ) {
 
-      setAudio(enabled);
+        const stream =
+          await navigator
+            .mediaDevices
+            .getUserMedia({
+              video: true,
+              audio: true,
+            });
 
-      window.localStream
-        .getAudioTracks()
-        .forEach(
-          (track) => {
+        window.localStream =
+          stream;
+      }
 
-            track.enabled =
-              enabled;
-          }
-        );
-    };
+      const audioTrack =
+        window.localStream
+          .getAudioTracks()[0];
+
+      if (!audioTrack) {
+        return;
+      }
+
+      audioTrack.enabled =
+        !audioTrack.enabled;
+
+      setAudio(
+        audioTrack.enabled
+      );
+
+    } catch (err) {
+
+      console.log(
+        "Audio Error:",
+        err
+      );
+    }
+  };
 
   // =========================================
   // SCREEN SHARE
